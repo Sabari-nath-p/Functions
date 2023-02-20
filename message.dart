@@ -1,13 +1,10 @@
-import 'dart:convert';
-
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 
 class Message {
   String? senderId;
   String? messageId;
-  ValueNotifier<int> messageListener = ValueNotifier<int>(0);
   List<MessageData> chat = [];
+
   Message({required this.messageId, required this.senderId});
   DatabaseReference messageDatabase = FirebaseDatabase.instance.ref("message");
 
@@ -21,7 +18,7 @@ class Message {
     });
   }
 
-  startMessageReceive(
+  startMessageListerner(
     Function(List chatMessage) onMessage,
   ) {
     messageDatabase.child(messageId!).onValue.listen((event) {
@@ -32,6 +29,8 @@ class Message {
             dateTime: data.child("date_time").value.toString(),
             messageId: data.key,
             senderId: data.child("sender_id").value.toString());
+
+        if (mg.senderId == senderId) mg.from = true;
         chat.add(mg);
       }
       onMessage(chat);
@@ -44,9 +43,11 @@ class MessageData {
   String? messageId;
   String? dateTime;
   String? message;
+  bool from = false;
   MessageData(
       {required this.message,
       required this.dateTime,
       required this.messageId,
-      required this.senderId});
+      required this.senderId,
+      this.from = false});
 }
