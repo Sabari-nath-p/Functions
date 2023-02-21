@@ -5,7 +5,7 @@ class MessageList {
   DatabaseReference db = FirebaseDatabase.instance.ref("chat_list");
   MessageList({required this.user_id});
 
-  chatLister(Function(List<chatData> chatData) newMessage) {
+  chatListener(Function(List<chatData> chatData) newMessage) {
     db.child(user_id!).orderByChild("data_time").onValue.listen((event) {
       List<chatData> chatList = [];
       for (var chat in event.snapshot.children) {
